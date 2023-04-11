@@ -24,6 +24,7 @@
 #include <app-common/zap-generated/attribute-type.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-id.h>
+#include<chrono>
 
 #define APP_TASK_NAME "APP"
 #define APP_EVENT_QUEUE_SIZE 10
@@ -37,6 +38,9 @@ using namespace ::chip::Credentials;
 using namespace ::chip::DeviceLayer;
 
 static const char * TAG = "app-task";
+
+extern long long g_startToggle;
+unsigned long long updateToggleApp;
 
 LEDWidget AppLED;
 Button AppButton;
@@ -160,7 +164,12 @@ void AppTask::UpdateClusterState()
     {
         ESP_LOGE(TAG, "Updating on/off cluster failed: %x", status);
     }
-
+    auto updateApp = std::chrono::system_clock::now();
+    auto updateAppMs = std::chrono::duration_cast<std::chrono::milliseconds>(updateApp.time_since_epoch()).count();
+    updateToggleApp=updateAppMs;
+    updateToggleApp=updateToggleApp-g_startToggle;
+    //ESP_LOGI(TAG, "COMPLETED TOGGLE AT %lld",updateToggleApp);
+    ESP_LOGI(TAG, "COMPLETED TOGGLE AFTER %lld milli seconds",updateToggleApp);
     ESP_LOGI(TAG, "Writing to Current Level cluster");
     status = Clusters::LevelControl::Attributes::CurrentLevel::Set(kLightEndpointId, AppLED.GetLevel());
 
@@ -168,4 +177,5 @@ void AppTask::UpdateClusterState()
     {
         ESP_LOGE(TAG, "Updating level cluster failed: %x", status);
     }
+    
 }

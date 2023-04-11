@@ -42,11 +42,13 @@
 #include <messaging/ExchangeContext.h>
 #include <messaging/ExchangeMgr.h>
 #include <protocols/Protocols.h>
+#include<chrono>
 
 using namespace chip::Encoding;
 using namespace chip::Inet;
 using namespace chip::System;
 
+unsigned long long startOnOffFromApp;
 namespace chip {
 namespace Messaging {
 
@@ -218,6 +220,24 @@ void ExchangeManager::OnMessageReceived(const PacketHeader & packetHeader, const
     //
     // Legend that can be used to decode this log line can be found in README.md
     //
+
+    //ChipLogProgress(ExchangeManager,"ONOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF %d, %d, %d",payloadHeader.GetProtocolID().GetProtocolId(),payloadHeader.GetMessageType(),session->GetFabricIndex());
+    if(payloadHeader.GetProtocolID().GetProtocolId()==0000 && payloadHeader.GetMessageType()==48)
+    {
+        auto startOnOff = std::chrono::system_clock::now();
+        auto startOnOffMs = std::chrono::duration_cast<std::chrono::milliseconds>(startOnOff.time_since_epoch()).count();
+        startOnOffFromApp=startOnOffMs;
+        ChipLogProgress(ExchangeManager,"STARTTTTTTT ONOFF FROM APP CHIP-TOOL AT %lld",startOnOffFromApp);
+    }
+    if(payloadHeader.GetProtocolID().GetProtocolId()==0000 && payloadHeader.GetMessageType()==16 && session->GetFabricIndex()==1)
+    {
+        unsigned long long endOnOffFromApp;
+        auto endOnOff = std::chrono::system_clock::now();
+        auto endOnOffMs = std::chrono::duration_cast<std::chrono::milliseconds>(endOnOff.time_since_epoch()).count();
+        endOnOffFromApp=endOnOffMs;
+        endOnOffFromApp=endOnOffFromApp-startOnOffFromApp;
+        ChipLogProgress(ExchangeManager,"ENDDDDDD ONOFF FROM APP AFTER %lld milli seconds",endOnOffFromApp);
+    }
     ChipLogProgress(ExchangeManager,
                     ">>> [E:" ChipLogFormatExchangeId " M:" ChipLogFormatMessageCounter "%s] (%s) Msg RX from %u:" ChipLogFormatX64
                     " [%04X] --- Type %04x:%02x (%s:%s)",

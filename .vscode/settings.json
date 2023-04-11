@@ -115,7 +115,10 @@
         "condition_variable": "cpp",
         "numeric": "cpp",
         "random": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "__availability": "cpp",
+        "__bits": "cpp",
+        "variant": "cpp"
     },
     // Configure paths or glob patterns to exclude from file watching.
     "files.watcherExclude": {
@@ -168,5 +171,6 @@
     "files.trimFinalNewlines": true,
     "C_Cpp.default.cppStandard": "gnu++14",
     "C_Cpp.default.cStandard": "gnu11",
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "cmake.sourceDirectory": "${workspaceFolder}/config/esp32/components/chip"
 }

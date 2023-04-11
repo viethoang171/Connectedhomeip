@@ -23,11 +23,13 @@
 #include <platform/CHIPDeviceLayer.h>
 #include <platform/CommissionableDataProvider.h>
 #include <platform/DeviceControlServer.h>
+#include<chrono>
 
 using namespace chip::app::Clusters;
 using namespace chip::System::Clock;
 
 using AdministratorCommissioning::CommissioningWindowStatus;
+extern unsigned long long g_startCommissioning;
 
 namespace {
 
@@ -53,7 +55,13 @@ void CommissioningWindowManager::OnPlatformEvent(const DeviceLayer::ChipDeviceEv
 {
     if (event->Type == DeviceLayer::DeviceEventType::kCommissioningComplete)
     {
-        ChipLogProgress(AppServer, "Commissioning completed successfully");
+        
+        auto endCommision = std::chrono::system_clock::now();
+        auto endCommisionMs = std::chrono::duration_cast<std::chrono::milliseconds>(endCommision.time_since_epoch()).count();
+        unsigned long long endCommissioning=endCommisionMs;
+        endCommissioning=endCommissioning-g_startCommissioning;
+        //ChipLogProgress(AppServer, "COMMISSIONING COMPLETED AT %lld",endCommissioning);
+        ChipLogProgress(AppServer, "COMMISSIONING COMPLETED AFTER %lld milli seconds",endCommissioning);
         DeviceLayer::SystemLayer().CancelTimer(HandleCommissioningWindowTimeout, this);
         mCommissioningTimeoutTimerArmed = false;
         Cleanup();

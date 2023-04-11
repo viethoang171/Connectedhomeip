@@ -38,7 +38,9 @@
 #include <platform/internal/BLEManager.h>
 #include <setup_payload/AdditionalDataPayloadGenerator.h>
 #include <system/SystemTimer.h>
+#include<chrono>
 
+unsigned long long g_startCommissioning;
 #include "esp_bt.h"
 #include "esp_log.h"
 #if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(5, 0, 0)
@@ -501,7 +503,6 @@ void BLEManagerImpl::DriveBLEState(void)
             if (!mFlags.Has(Flags::kAdvertising))
             {
                 ChipLogProgress(DeviceLayer, "CHIPoBLE advertising started");
-
                 mFlags.Set(Flags::kAdvertising);
 
                 // Post a CHIPoBLEAdvertisingChange(Started) event.
@@ -887,6 +888,10 @@ uint16_t BLEManagerImpl::_NumConnections(void)
 CHIP_ERROR BLEManagerImpl::HandleGAPConnect(struct ble_gap_event * gapEvent)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
+    auto startTime = std::chrono::system_clock::now();
+    auto startTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(startTime.time_since_epoch()).count();
+    g_startCommissioning=startTimeMs;
+    ChipLogProgress(DeviceLayer, "START COMMISSIONING at %lld",g_startCommissioning);
     ChipLogProgress(DeviceLayer, "BLE GAP connection established (con %u)", gapEvent->connect.conn_handle);
 
     // Track the number of active GAP connections.

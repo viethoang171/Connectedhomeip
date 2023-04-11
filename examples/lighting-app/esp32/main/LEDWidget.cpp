@@ -18,6 +18,8 @@
 #include "LEDWidget.h"
 #include "ColorFormat.h"
 #include "led_strip.h"
+#include<chrono>
+unsigned long long g_startToggle;
 
 static const char * TAG = "LEDWidget";
 
@@ -82,6 +84,10 @@ void LEDWidget::Set(bool state)
 
 void LEDWidget::Toggle()
 {
+    auto startTime = std::chrono::system_clock::now();
+    auto startTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(startTime.time_since_epoch()).count();
+    g_startToggle=startTimeMs;
+    ESP_LOGI(TAG, "TTTTTTTTTTTOGGLE at %lld",g_startToggle);
     ESP_LOGI(TAG, "Toggling state to %d", !mState);
     mState = !mState;
 
@@ -124,7 +130,7 @@ void LEDWidget::SetColor(uint8_t Hue, uint8_t Saturation)
 
 void LEDWidget::DoSet(void)
 {
-    uint8_t brightness = mState ? mBrightness : 0;
+    uint8_t brightness = mState ? mBrightness : 0;//da sua mBrightness=255
 
 #if CONFIG_LED_TYPE_RMT
     if (mStrip)

@@ -75,10 +75,10 @@ menu "Demo"
     config LED_GPIO
         int "LED GPIO number"
         range 0 48
-        default 26 if DEVICE_TYPE_ESP32_WROVER_KIT
+        default 2 if DEVICE_TYPE_ESP32_WROVER_KIT
         default 8 if DEVICE_TYPE_ESP32_C3_DEVKITM || DEVICE_TYPE_ESP32H2_DEVKITC
         default 48 if DEVICE_TYPE_ESP32_S3_DEVKITM
-        default 5
+        default 2
         help
             GPIO number (IOxx) to blink on and off or the RMT signal for the addressable LED.
 

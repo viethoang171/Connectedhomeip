@@ -1239,7 +1239,7 @@ void BLEManagerImpl::HandleGAPEvent(esp_gap_ble_cb_event_t event, esp_ble_gap_cb
         // Transition to the Advertising state...
         if (!sInstance.mFlags.Has(Flags::kAdvertising))
         {
-            ChipLogProgress(DeviceLayer, "CHIPoBLE advertising started");
+            ChipLogProgress(DeviceLayer, "CHIPoBLE advertising started ");
 
             sInstance.mFlags.Set(Flags::kAdvertising);
 
